@@ -9,6 +9,7 @@ import time
 
 
 def convert_ms(t):
+    """ Convert milliseconds to mm:ss notation"""
     return f'{int((t // 1000) // 60)}:{int((t // 1000) % 60):0>2}'
 
 def get_details(sp):
@@ -24,7 +25,7 @@ def get_details(sp):
         return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
 
 def main(breathe: bool = False, bpm=False, strobe=False):
-    username = '%25whapow'
+    username = os.getenv('SPOTIFY_USER_ID')
 
     lifx_key = os.getenv('LIFX_KEY')
     scope = 'user-read-currently-playing user-read-playback-state user-modify-playback-state'
@@ -38,8 +39,6 @@ def main(breathe: bool = False, bpm=False, strobe=False):
     parser.add_argument('-b',  '--breathe', action='store_true', help='With breathe effect')
 
     args = parser.parse_args()
-    
-    print(args.strobe)
 
     with open('colours.json', 'r') as fp:
         colours = json.load(fp)
@@ -73,7 +72,6 @@ def main(breathe: bool = False, bpm=False, strobe=False):
         iterations = 0
         prev_tempo = 0
         prev_loudness = 0
-        prev_colour = ''
         prev_colour_type = ''
 
         for ind, sect_end in enumerate(sect_ends):
@@ -88,8 +86,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
             tempo_change = "" if ind == 0 else '+' if tempo - prev_tempo > 0 else '-'
             loudness_change = "" if ind == 0 else '+' if loudness - prev_loudness > 0 else '-' # if 
 
-            speed = 2 if tempo_change in ["", "-"] else 1 #(1 if tempo_change == '+' or loudness_change == '+' else 2)
-
+            speed = 2 if tempo_change in ["", "-"] else 1 
             p = time_interval_per_beat*speed
             cyc = totalbeats / speed
 
@@ -99,7 +96,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
                 type_col = choice(colour_types)
 
             colour_keys = list(colours[type_col].keys())
-            # from_colour = room.current_colour()
+
             rand_col = choice(colour_keys)
             
             to_colour = colours[type_col][rand_col]
@@ -119,15 +116,12 @@ def main(breathe: bool = False, bpm=False, strobe=False):
             t1 = time.time()
             delay = (t1 - t0) * 1000
 
-            # delay = 0
             cur_time = sp.current_playback()['progress_ms']
-            # i = 0
-            while cur_time < sect_end - delay: # account for time to reset bulb and a second earlier is better irl??
+            
+            while cur_time < sect_end - delay: 
+                start_time = time.time()
                 details = get_details(sp)
                 iterations +=1
-                if not details['is_playing']:
-                    # room.reset_colour() this stops the strobes
-                    pass
                 check_song = details['uri']
                 if uri != check_song:
                     os.system('clear')
@@ -156,17 +150,18 @@ def main(breathe: bool = False, bpm=False, strobe=False):
                     if i >= len(steps):
                         i = 0
 
-                time.sleep(0.5)
-                cur_time = get_details(sp)['progress_ms'] # not sure why adding a second here helps
+                end_time = time.time()
+                taken = end_time - start_time
+                time.sleep(1 - taken)
+                cur_time = get_details(sp)['progress_ms'] 
 
 
             os.system('clear')
-            print('Changing colour')
+            if ind != len(sections) - 1:
+                print('Changing colour')
             prev_tempo = tempo
             prev_loudness = loudness
-            # prev_colour = from_colour
-
-        # room.reset_colour()
+            
         main()
 
 
