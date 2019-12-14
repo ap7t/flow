@@ -13,16 +13,16 @@ def convert_ms(t):
     return f'{int((t // 1000) // 60)}:{int((t // 1000) % 60):0>2}'
 
 def get_details(sp):
-        """ Return a dictionary with the keys song, artist, uri and progress_ms, is_playing for currently playing song"""
-        results = sp.current_playback()
-        song = results['item']['name']
-        uri = results['item']['uri']
-        artist = results['item']['artists'][0]['name']
-        album = results['item']['album']['name']
-        progress_ms = results['progress_ms']
-        is_playing = results['is_playing']
+    """ Return a dictionary with the keys song, artist, uri and progress_ms, is_playing for currently playing song"""
+    results = sp.current_playback()
+    song = results['item']['name']
+    uri = results['item']['uri']
+    artist = results['item']['artists'][0]['name']
+    album = results['item']['album']['name']
+    progress_ms = results['progress_ms']
+    is_playing = results['is_playing']
 
-        return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
+    return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
 
 def main(breathe: bool = False, bpm=False, strobe=False):
     username = os.getenv('SPOTIFY_USER_ID')
