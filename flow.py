@@ -1,6 +1,6 @@
 import spotipy.util as util
 import argparse
-import spotipy
+from spotipy import Spotify
 import os
 from pifx import PIFX
 import json
@@ -13,16 +13,16 @@ def convert_ms(t):
     return f'{int((t // 1000) // 60)}:{int((t // 1000) % 60):0>2}'
 
 def get_details(sp):
-        """ Return a dictionary with the keys song, artist, uri and progress_ms, is_playing for currently playing song"""
-        results = sp.current_playback()
-        song = results['item']['name']
-        uri = results['item']['uri']
-        artist = results['item']['artists'][0]['name']
-        album = results['item']['album']['name']
-        progress_ms = results['progress_ms']
-        is_playing = results['is_playing']
+    """ Return a dictionary with the keys song, artist, uri and progress_ms, is_playing for currently playing song"""
+    results = sp.current_playback()
+    song = results['item']['name']
+    uri = results['item']['uri']
+    artist = results['item']['artists'][0]['name']
+    album = results['item']['album']['name']
+    progress_ms = results['progress_ms']
+    is_playing = results['is_playing']
 
-        return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
+    return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
 
 def main(breathe: bool = False, bpm=False, strobe=False):
     username = os.getenv('SPOTIFY_USER_ID')
@@ -31,7 +31,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
     scope = 'user-read-currently-playing user-read-playback-state user-modify-playback-state'
     spotify_token = util.prompt_for_user_token(username, scope)
     
-    sp = spotipy.Spotify(auth=spotify_token) if spotify_token else print('Cannot get Spotify token')
+    sp = Spotify(auth=spotify_token) if spotify_token else print('Cannot get Spotify token')
     light = PIFX(lifx_key)
 
     parser = argparse.ArgumentParser()
@@ -48,7 +48,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
         uri = details['uri']
         device = sp.devices()['devices'][0]['id']
         if not details['is_playing']:
-            sp.start_playback(device_id=device, position_ms=details['progress_ms'])
+            sp.start_playback(device_id=device, uris=[uri])
 
         sections = sp.audio_analysis(uri)['sections']
         sect_ends = [(sections[i]['start'] + sections[i]['duration'])*1000 for i in range(len(sections))]
@@ -94,16 +94,15 @@ def main(breathe: bool = False, bpm=False, strobe=False):
             type_col = colour_types[ind]
             while type_col is prev_colour_type:
                 type_col = choice(colour_types)
-
+            
             colour_keys = list(colours[type_col].keys())
-
             rand_col = choice(colour_keys)
             
             to_colour = colours[type_col][rand_col]
 
             t0 = 0
 
-            if args.strobe:
+            if args.strobe and ind != 0:
                 t0 = time.time()
                 light.set_state(color=to_colour, brightness=1.0)
                 light.pulse_lights(color='#000000', period=p, cycles=cyc)
@@ -150,10 +149,15 @@ def main(breathe: bool = False, bpm=False, strobe=False):
                     if i >= len(steps):
                         i = 0
 
+                # cur_time = get_details(sp)['progress_ms'] 
+
+                # cur_time = get_details(sp)['progress_ms'] 
+
                 end_time = time.time()
                 taken = end_time - start_time
-                time.sleep(1 - taken)
-                cur_time = get_details(sp)['progress_ms'] 
+                
+                if details['is_playing']:
+                    cur_time += taken * 1000
 
 
             os.system('clear')
@@ -161,7 +165,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
                 print('Changing colour')
             prev_tempo = tempo
             prev_loudness = loudness
-            
+
         main()
 
 
@@ -174,6 +178,7 @@ def main(breathe: bool = False, bpm=False, strobe=False):
     
     except KeyboardInterrupt:
         light.set_state(color='hue:240 kelvin:9000', power='on', brightness=1.0) # my usual colour
+        sp.pause_playback()
         quit()
 
 
