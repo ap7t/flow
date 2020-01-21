@@ -61,12 +61,16 @@ def get_details(sp):
 
     return {'song':song, 'artist':artist, 'album': album, 'uri':uri, 'progress_ms':progress_ms, 'is_playing':is_playing}
 
+<<<<<<< HEAD
 def generate_random_colour():
     num = randint(0, 16777215) 
     hex_num = '#' + f'{hex(num)[2:]}'.zfill(6)
     return hex_num
 
 def main():
+=======
+def main(breathe: bool = False, bpm=False, strobe=False):
+>>>>>>> d7d9a2cbd3f507bfd85308be29645431f9995cc8
     username = os.getenv('SPOTIFY_USER_ID')
 
     lifx_key = os.getenv('LIFX_KEY')
@@ -263,4 +267,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+<<<<<<< HEAD
     
+=======
+>>>>>>> d7d9a2cbd3f507bfd85308be29645431f9995cc8
