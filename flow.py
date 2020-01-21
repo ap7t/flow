@@ -7,7 +7,6 @@ import json
 from random import shuffle, choice, randint
 import time
 from math import floor
-from screen import Screen
 
 class extSpotify(Spotify):
     def __init__(self, auth):
