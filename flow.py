@@ -267,7 +267,3 @@ def main(breathe: bool = False, bpm=False, strobe=False):
 
 if __name__ == "__main__":
     main()
-<<<<<<< HEAD
-    
-=======
->>>>>>> d7d9a2cbd3f507bfd85308be29645431f9995cc8
