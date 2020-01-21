@@ -5,6 +5,7 @@ Flow also can flash to the beats and change between strobing and breathing effec
 usage: flow.py [-h] [-s] [-b] [-m] [-t]
 
 optional arguments:
+
   -h, --help     show this help message and exit
   
   -s, --strobe   Strobe to the BPM of a song (changes based on tempo
