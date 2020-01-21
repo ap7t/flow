@@ -6,17 +6,17 @@ usage: flow.py [-h] [-s] [-b] [-m] [-t]
 
 optional arguments:
 
-  -h, --help     show this help message and exit
+  -h, --help          show this help message and exit
   
-  -s, --strobe   Strobe to the BPM of a song (changes based on tempo
-                 changes)
+  -s, --strobe        strobe to the BPM of a song (changes based on tempo
+                      changes)
                  
-  -b, --breathe  Breathe to the BPM of a song (changes based on tempo
-                 changes)
+  -b, --breathe       breathe to the BPM of a song (changes based on tempo
+                      changes)
                  
-  -m, --mixed    Changes between stobing and breathing to BPM of a song
-                 (changes based on loudness changes)
+  -m, --mixed         changes between stobing and breathing to BPM of a song
+                      (changes based on loudness changes)
                  
-  -t, --tempo    Relative changes in tempo between sections will not
-                 change the period of light effect
+  -t, --tempo         relative changes in tempo between sections will not
+                      change the period of light effect
   
