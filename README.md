@@ -1,5 +1,5 @@
 # flow
-A program that changes the colour of an LIFX Bulb as a song plays on Spotify. 
+A program that changes the colour of an LIFX Bulb based on different sections of a song playonig on Spotify. 
 Flow also can flash to the beats and change between strobing and breathing effects based on loudness and tempo changes.
 
 usage: flow.py [-h] [-s] [-b] [-m] [-t]
